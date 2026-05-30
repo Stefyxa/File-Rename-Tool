@@ -1,6 +1,7 @@
 from pathlib import Path
+import json, os
 from datetime import datetime
-import json
+from undo import undo
 
 adresa = input("Intrduceti adresa folder-ului:")
 folder = Path(adresa)
@@ -22,6 +23,7 @@ if folder.exists() and folder.is_dir():
     poze = sorted([item for item in folder.iterdir() if item.is_file() and item.suffix.lower() in ['.jpg','.jpeg', '.png']])
     # creaza o lista cu fiecare element din folder doar daca este fisier de tip imagine
 
+    istoric = {}
     
     for index, img in enumerate(poze, start=1):
         data = str(datetime.today().strftime("%d-%m-%Y"))
@@ -34,9 +36,23 @@ if folder.exists() and folder.is_dir():
         adresaNoua = Path(folder / nume_nou)
         #creaza noua adresa din sablon
 
+        istoric[nume_nou] = img.name
+
         img.rename(adresaNoua)
 
-    print("Redenumire realizata cu succes!")
+    with open("history.json", "w", encoding='utf-8') as f:
+        json.dump(istoric, f, indent=4)
+    print("Redenumire realizata cu succes!\n Se deschide folderul...")
+
+    cale_absoluta = str(folder.resolve())
+    os.startfile(cale_absoluta)
+
+    rasp = input("Doriti sa se salveze schimbarile?\n Raspundeti cu 'da' sau 'nu':")
+    if rasp == 'nu':
+        undo(folder)
+        
+    with open("history.json", "w", encoding='utf-8') as f:
+        json.dump({}, f, indent = 4)
 
 else:
     print("Adresa invalida!")
