@@ -2,6 +2,7 @@ from pathlib import Path
 import json, os
 from datetime import datetime
 from undo import undo
+from exif import Image
 
 adresa = input("Intrduceti adresa folder-ului:")
 folder = Path(adresa)
@@ -24,9 +25,21 @@ if folder.exists() and folder.is_dir():
     # creaza o lista cu fiecare element din folder doar daca este fisier de tip imagine
 
     istoric = {}
-    
     for index, img in enumerate(poze, start=1):
-        data = str(datetime.today().strftime("%d-%m-%Y"))
+
+        try:
+            with open(img, 'rb') as p:
+                img_exif = Image(p)
+                if img_exif.has_exif:
+                    data = img_exif.datetime_original
+                    data = data.split(' ')[0]
+                    data = data.replace(':', '-')
+                else:
+                    data = str(datetime.today().strftime("%Y-%m-%d"))
+
+        except (KeyError, AttributeError) as e:
+            print(e)
+            data = str(datetime.today().strftime("%Y-%m-%d"))
 
         extensie = img.suffix
         nume_nou = sablon
