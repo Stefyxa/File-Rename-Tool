@@ -12,7 +12,7 @@ def undo(adresa):
             print("Istoricul este gol!")
             return
         else:
-            print("Istoric initializat!\n Se incepe restaurarea...")
+            print("Se incepe restaurarea...")
 
         for k,v in istoric.items():
                 cale_noua = folder / k

@@ -1,3 +1,31 @@
+"""
+Nume proiect: File Rename Tool
+Autori: Obeloiu Stefania & Mihaila Andreea
+Grupă: 3.2
+
+Descriere:
+    Acest script automatizează procesul de redenumire a fișierelor de tip imagine 
+    (.jpg, .jpeg, .png) dintr-un folder specificat de utilizator. Redenumirea se face 
+    pe baza unui șablon configurabil (preluat din 'config.json'). Programul extrage
+    data originala din metadata EXIF a pozelor. De asemenea, exista si o functie
+    care permite anularea operațiunii (Undo).
+
+Surse și Referințe:
+    1. Documentatie librarie Pathlib: https://docs.python.org/3/library/pathlib.html
+        - Utilizată pentru gestionarea modernă a căilor de fișiere
+    2. Documentație librărie EXIF: https://pypi.org/project/exif/
+        - Utilizată pentru extragerea tag-ului 'datetime_original'.
+    3. Materiale de curs: https://github.com/DataLabUPT/pyCourse/
+    4. Modelul AI Google Gemini:
+        - Utilizat exclusiv ca asistent de consultanta tehnica si debugging
+        - Notă: Arhitectura aplicației, logica fluxului de redenumire/undo și deciziile 
+        finale de implementare a fragmentelor de cod aparțin în totalitate autorilor.
+
+Module standard: pathlib, json, os, datetime
+Dependențe externe: exif (v1.6.1)
+"""
+
+
 from pathlib import Path
 import json, os
 from datetime import datetime
@@ -55,13 +83,13 @@ if folder.exists() and folder.is_dir():
 
     with open("history.json", "w", encoding='utf-8') as f:
         json.dump(istoric, f, indent=4)
-    print("Redenumire realizata cu succes!\n Se deschide folderul...")
+    print("Redenumire realizata cu succes!\nSe deschide folderul...")
 
     cale_absoluta = str(folder.resolve())
     os.startfile(cale_absoluta)
 
-    rasp = input("Doriti sa se salveze schimbarile?\n Raspundeti cu 'da' sau 'nu':")
-    if rasp == 'nu':
+    rasp = input("Doriti sa reveniti la numele originale?\nRaspundeti cu 'da' sau 'nu':")
+    if rasp == 'da':
         undo(folder)
         
     with open("history.json", "w", encoding='utf-8') as f:
